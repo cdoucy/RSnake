@@ -1,5 +1,5 @@
 [package]
-name = "Snake"
+name = "rsnake"
 version = "0.1.0"
 authors = ["Clément Doucy <clement.doucy@epitech.eu>"]
 edition = "2018"

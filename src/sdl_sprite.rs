@@ -85,11 +85,11 @@ impl SdlSprite {
         let w_o = other.sprite_rect.width() as i32;
         let h_o = other.sprite_rect.height() as i32;
 
-        if x > x_o + w_o || x_o > x + w {
+        if x >= x_o + w_o || x_o >= x + w {
             return false;
         }
 
-        if y > y_o + h_o || y_o > y + h {
+        if y >= y_o + h_o || y_o >= y + h {
             return false;
         }
 

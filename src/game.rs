@@ -2,7 +2,7 @@ use sdl2::rect::{Rect, Point};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
-use std::time::{Duration, Instant};
+use std::time::{Instant};
 
 use rand::Rng;
 
@@ -50,29 +50,52 @@ impl Game {
                 }
             }
             if clock.elapsed().as_millis() > 30 {
+                match Game::is_done(&self.snake) {
+                    true => break 'running,
+                    _ => {}
+                }
                 Game::manage_snake(&mut self.snake, &mut self.apple, &mut rng);
+                self.snake.push(self.apple);
+                self.renderer.render(Color::RGB(66, 50, 100), &texture, &self.snake);
+                self.snake.pop();
                 clock = Instant::now();
             }
-            self.snake.push(self.apple);
-            self.renderer.render(Color::RGB(66, 50, 100), &texture, &self.snake);
-            self.snake.pop();
-            ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 120));
         }
+    }
+
+    fn is_done(sprites: &Vec<SdlSprite>) -> bool {
+        let (x, y) = sprites[0].get_pos();
+
+        if x >= 800 || x <= 0 || y >= 600 || y <= 0 {
+            return true;
+        }
+
+        for i in 1..sprites.len() {
+            if sprites[0].overlap(&sprites[i]) {
+                return true;
+            }
+        }
+        false
     }
 
     fn manage_snake(sprites: &mut Vec<SdlSprite>, apple: &mut SdlSprite, rng: &mut rand::rngs::ThreadRng) {
         let mut head = sprites[0].clone();
-        head.move_sprite(24);
+
+        head.move_sprite(16);
         sprites.insert(0, head);
         sprites[1].set_x_y_texture(40, 24);
+
         if !sprites[0].overlap(apple) {
             sprites.pop();
         } else {
             let mut check = true;
+
             while check {
-                let x = rng.gen_range(0, 800);
-                let y = rng.gen_range(0, 600);
+
+                let x = rng.gen_range(24, 776);
+                let y = rng.gen_range(24, 576);
                 apple.set_pos(x, y);
+
                 for s in sprites.iter() {
                     check = s.overlap(apple);
                 }
@@ -81,10 +104,10 @@ impl Game {
     }
 
     fn init_sprites(sprites: &mut Vec<SdlSprite>) {
-        sprites.push(SdlSprite::new(Rect::new(8, 24, 8, 8), Point::new(400, 300), 3));
-        sprites.push(SdlSprite::new(Rect::new(40, 24, 8, 8), Point::new(400, 324), 3));
-        sprites.push(SdlSprite::new(Rect::new(40, 24, 8, 8), Point::new(400, 348), 3));
-        sprites.push(SdlSprite::new(Rect::new(40, 24, 8, 8), Point::new(400, 372), 3));
+        sprites.push(SdlSprite::new(Rect::new(8, 24, 8, 8), Point::new(400, 300), 2));
+        sprites.push(SdlSprite::new(Rect::new(40, 24, 8, 8), Point::new(400, 324), 2));
+        sprites.push(SdlSprite::new(Rect::new(40, 24, 8, 8), Point::new(400, 348), 2));
+        sprites.push(SdlSprite::new(Rect::new(40, 24, 8, 8), Point::new(400, 372), 2));
     }
 
     fn manage_event(ev: &sdl2::event::Event, head: &mut SdlSprite) -> bool {
