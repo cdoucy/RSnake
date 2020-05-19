@@ -1,0 +1,13 @@
+[package]
+name = "Snake"
+version = "0.1.0"
+authors = ["Clément Doucy <clement.doucy@epitech.eu>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+rand="0.6.0"
+[dependencies.sdl2]
+version = "0.34.0"
+default-features = false
+features = ["image"]
